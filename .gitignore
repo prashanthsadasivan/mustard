@@ -21,4 +21,9 @@ erl_crash.dump
 
 # Ignore package tarball (built via "mix hex.build").
 mustard-*.tar
+priv/
+log/
+ring_state_dir*
+platform_dir*
+
 

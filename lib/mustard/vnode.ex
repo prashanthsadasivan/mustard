@@ -16,18 +16,22 @@ defmodule Mustard.Vnode do
   end
 
   def handoff_starting(_dest, state) do
+    Logger.info("handoff_starting")
     {true, state}
   end
 
   def handoff_cancelled(state) do
+    Logger.info("handoff_cancelled")
     {:ok, state}
   end
 
   def handoff_finished(_dest, state) do
+    Logger.info("handoff_finished")
     {:ok, state}
   end
 
   def handle_handoff_command(_fold_req, _sender, state) do
+    Logger.info("handle_handoff_command")
     {:noreply, state}
   end
 
@@ -44,10 +48,13 @@ defmodule Mustard.Vnode do
   end
 
   def handle_handoff_data(_bin_data, state) do
+    Logger.info("handle_handoff_data")
     {:reply, :ok, state}
   end
 
   def encode_handoff_item(_k, _v) do
+    Logger.info("encode_handoff")
+    ""
   end
 
   def handle_coverage(_req, _key_spaces, _sender, state) do
@@ -66,4 +73,8 @@ defmodule Mustard.Vnode do
     :ok
   end
 
+  def terminate(_reason, _state) do
+    Logger.info("terminate")
+    :ok
+  end
 end

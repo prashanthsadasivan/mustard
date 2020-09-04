@@ -4,23 +4,17 @@ defmodule Mustard.Application do
   @moduledoc false
 
   use Application
+  require Logger
 
   def start(_type, _args) do
-    :ok = :riak_core.register([{:vnode_module, Mustard.Vnode}])
-    :ok = :riak_core_node_watcher.service_up(Mustard.Service, self)
-
-    children = [
-      %{
-        id: Mustard.VnodeMasterWorker,
-        start: {:riak_core_vnode_master, :start_link, [Mustard.Vnode]}
-      }
-      # Starts a worker by calling: Mustard.Worker.start_link(arg)
-      # {Mustard.Worker, arg}
-    ]
-
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Mustard.Supervisor]
-    Supervisor.start_link(children, opts)
+    case Mustard.Sup.start_link() do
+      {:ok, pid} ->
+        :ok = :riak_core.register([{:vnode_module, Mustard.Vnode}])
+        :ok = :riak_core_node_watcher.service_up(Mustard.Service, self())
+        {:ok, pid}
+      {:error, reason} ->
+        Logger.error("Unable to start NoSlides supervisor because: #{inspect reason}")
+        {:error, reason}
+    end
   end
 end
